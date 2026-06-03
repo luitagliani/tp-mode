@@ -103,16 +103,16 @@ def main():
     print("- - - - - - - - - -".center(ancho))
 
     print(f"➤ Apogeo real esperado: {RADIO_APOGEO} km")
-    print(f"➤ Apogeo calculado con RK2:   {max(dist_rk2):.2f} km\n")
+    print(f"➤ Apogeo calculado con RK2: {max(dist_rk2):.2f} km\n")
 
     print(f"➤ Perigeo real esperado: {RADIO_PERIGEO} km")
-    print(f"➤ Perigeo calculado con RK2:   {min(dist_rk2):.2f} km\n")
+    print(f"➤ Perigeo calculado con RK2: {min(dist_rk2):.2f} km\n")
 
     print(f"➤ Velocidad Máxima esperada: {V_PER_LUNA:.4f} km/s")
-    print(f"➤ Velocidad Máxima RK2:      {max(vel_rk2):.4f} km/s\n")
+    print(f"➤ Velocidad Máxima RK2: {max(vel_rk2):.4f} km/s\n")
 
     print(f"➤ Velocidad Mínima esperada: {V_APO_LUNA:.4f} km/s")
-    print(f"➤ Velocidad Mínima RK2:      {min(vel_rk2):.4f} km/s")
+    print(f"➤ Velocidad Mínima RK2: {min(vel_rk2):.4f} km/s")
 
     graficar_resultados_luna(x_rk2, y_rk2, dist_rk2, tiempos_dias, RADIO_APOGEO, RADIO_PERIGEO)
 
