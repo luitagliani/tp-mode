@@ -151,6 +151,7 @@ def graficar_comparacion(
     plt.grid(True)
     plt.legend()
     plt.tight_layout()
+    plt.savefig(f"comparacion_orbita_luna_h_{h}.png")
     plt.show()
 
     # Grafico 2: distancia Tierra-Luna
@@ -165,6 +166,7 @@ def graficar_comparacion(
     plt.grid(True)
     plt.legend()
     plt.tight_layout()
+    plt.savefig(f"comparacion_luna_h_{h}.png")
     plt.show()
 
 
