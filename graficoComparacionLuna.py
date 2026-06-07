@@ -111,7 +111,7 @@ def comparar_euler_rk2(h):
         estados_rk2, MU_T
     )
 
-    print("Comparacion para h =", h, "s")
+    print("\nComparacion para h =", h, "s")
     print("\nEuler:")
     for clave, valor in metricas_euler.items():
         print(clave, "=", valor)
@@ -152,7 +152,7 @@ def graficar_comparacion(
     plt.legend()
     plt.tight_layout()
     plt.savefig(f"comparacion_orbita_luna_h_{h}.png")
-    plt.show()
+    plt.close()
 
     # Grafico 2: distancia Tierra-Luna
     plt.figure(figsize=(10, 5))
@@ -167,24 +167,31 @@ def graficar_comparacion(
     plt.legend()
     plt.tight_layout()
     plt.savefig(f"comparacion_luna_h_{h}.png")
-    plt.show()
+    plt.close()
 
 
-# Ejecucion para un paso temporal elegido
-h = 500
+# Grafico comparación apogeo
+def graficar_comparacion_apogeo(resultados_h):
+    h_values = [res["h"] for res in resultados_h]
+    r_max_euler = [res["euler"]["r_max"] for res in resultados_h]
+    r_max_rk2 = [res["rk2"]["r_max"] for res in resultados_h]
 
-resultado = comparar_euler_rk2(h)
+    plt.figure(figsize=(8, 5))
+    plt.plot(h_values, r_max_euler, marker="o", label="Euler")
+    plt.plot(h_values, r_max_rk2, marker="o", label="RK2")
+    plt.axhline(RADIO_APOGEO, linestyle=":", label="Apogeo esperado")
+    plt.xscale("log")
+    plt.xlabel("Paso temporal h [s]")
+    plt.ylabel("Apogeo máximo simulado [km]")
+    plt.title("Comparación del apogeo máximo simulado vs paso temporal")
+    plt.grid(True)
+    plt.legend()
+    plt.tight_layout()
+    plt.savefig("comparacion_apogeo_vs_h.png")
+    plt.close()
 
-(
-    t_euler, estados_euler, r_euler, v_euler,
-    t_rk2, estados_rk2, r_rk2, v_rk2
-) = resultado
 
-graficar_comparacion(
-    t_euler, estados_euler, r_euler,
-    t_rk2, estados_rk2, r_rk2,
-    h
-)
+
 #Anaisis pasos temporales
 
 def analizar_pasos_temporales(lista_h):
@@ -224,7 +231,7 @@ resultados_h = analizar_pasos_temporales(lista_h)
 for resultado in resultados_h:
     h = resultado["h"]
 
-    print("\nPaso h =", h, "s")
+    print("\n\nPaso h =", h, "s")
 
     print("Euler:")
     print("r_min =", resultado["euler"]["r_min"])
@@ -235,6 +242,11 @@ for resultado in resultados_h:
     print("r_max =", resultado["rk2"]["r_max"])
 
 if __name__ == "__main__":
+    lista_h = [100, 1000, 1800, 3600, 7200]
+    analizar_pasos_temporales(lista_h)
+
+    graficar_comparacion_apogeo(resultados_h)
+
     h = 500
     resultado = comparar_euler_rk2(h)
 
@@ -248,5 +260,3 @@ if __name__ == "__main__":
         t_rk2, estados_rk2, r_rk2,
         h)
     
-    lista_h = [100, 500, 1000, 1800, 3600, 7200]
-    analizar_pasos_temporales(lista_h)
