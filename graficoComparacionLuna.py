@@ -73,7 +73,7 @@ def integrar(Y0, h, tiempo_total, mu_T, metodo):
     return np.array(tiempos), np.array(estados)
 
 # MÉTRICAS DE LA ÓRBITA
-def calcular_metricas(estados, mu_T):
+def calcular_metricas(estados):
     x = estados[:, 0]
     y = estados[:, 1]
     vx = estados[:, 2]
@@ -92,8 +92,8 @@ def calcular_metricas(estados, mu_T):
     return metricas, r, v
 
 # COMPARACIÓN EULER VS RK2
-def comparar_euler_rk2(h):
-    tiempo_total = 28 * SEGUNDOS_POR_DIA
+def comparar_euler_rk2(h, dias_simulados):
+    tiempo_total = dias_simulados * SEGUNDOS_POR_DIA
 
     t_euler, estados_euler = integrar(
         Y0, h, tiempo_total, MU_T, metodo="euler"
@@ -103,33 +103,44 @@ def comparar_euler_rk2(h):
         Y0, h, tiempo_total, MU_T, metodo="rk2"
     )
 
-    metricas_euler, r_euler, v_euler = calcular_metricas(
-        estados_euler, MU_T
-    )
+    metricas_euler, r_euler, v_euler = calcular_metricas(estados_euler)
+    metricas_rk2, r_rk2, v_rk2 = calcular_metricas(estados_rk2)
 
-    metricas_rk2, r_rk2, v_rk2 = calcular_metricas(
-        estados_rk2, MU_T
-    )
 
-    print("\nComparacion para h =", h, "s")
+    print("\n" + "=" * 70)
+    print(f"Comparación para h = {h} s")
+    print(f"Días simulados = {dias_simulados}")
+    print("=" * 70)
+
+    print("\nValores esperados:")
+    print(f"Perigeo esperado = {RADIO_PERIGEO:.2f} km")
+    print(f"Apogeo esperado = {RADIO_APOGEO:.2f} km")
+
     print("\nEuler:")
     for clave, valor in metricas_euler.items():
-        print(clave, "=", valor)
+        if "v" in clave:
+            print(f"{clave} = {valor:.6f} km/s")
+        else:
+            print(f"{clave} = {valor:.2f} km")
 
     print("\nRK2:")
     for clave, valor in metricas_rk2.items():
-        print(clave, "=", valor)
+        if "v" in clave:
+            print(f"{clave} = {valor:.6f} km/s")
+        else:
+            print(f"{clave} = {valor:.2f} km")
 
     return (
         t_euler, estados_euler, r_euler, v_euler,
-        t_rk2, estados_rk2, r_rk2, v_rk2
+        t_rk2, estados_rk2, r_rk2, v_rk2,
+        metricas_euler, metricas_rk2
     )
 
 # GRÁFICOS DE VALIDACIÓN DE UNA ÓRBITA
 def graficar_comparacion(
     t_euler, estados_euler, r_euler,
     t_rk2, estados_rk2, r_rk2,
-    h
+    h, dias_simulados
 ):
     dias_euler = t_euler / SEGUNDOS_POR_DIA
     dias_rk2 = t_rk2 / SEGUNDOS_POR_DIA
@@ -186,13 +197,9 @@ def analizar_pasos_temporales(lista_h, dias_simulados):
             Y0, h, tiempo_total, MU_T, metodo="rk2"
         )
 
-        metricas_euler, r_euler, v_euler = calcular_metricas(
-            estados_euler, MU_T
-        )
+        metricas_euler, r_euler, v_euler = calcular_metricas(estados_euler)
 
-        metricas_rk2, r_rk2, v_rk2 = calcular_metricas(
-            estados_rk2, MU_T
-        )
+        metricas_rk2, r_rk2, v_rk2 = calcular_metricas(estados_rk2)
 
         resultados.append({
             "h": h,
