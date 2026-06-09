@@ -1,5 +1,6 @@
 import numpy as np
 import matplotlib.pyplot as plt
+import os
 
 # Constantes y datos de referencia
 MU_T = 398600.435507       # km^3/s^2
@@ -163,7 +164,7 @@ def graficar_comparacion(
     plt.grid(True)
     plt.legend()
     plt.tight_layout()
-    plt.savefig(f"comparacion_orbita_luna_h_{h}.png")
+    plt.savefig(os.path.join("imagenes", f"comparacion_orbita_luna_h_{h}.png"))
     plt.close()
 
     # Grafico 2: distancia Tierra-Luna
@@ -178,7 +179,7 @@ def graficar_comparacion(
     plt.grid(True)
     plt.legend()
     plt.tight_layout()
-    plt.savefig(f"comparacion_luna_h_{h}.png")
+    plt.savefig(os.path.join("imagenes", f"comparacion_luna_h_{h}.png"))
     plt.close()
 
 
@@ -249,7 +250,7 @@ def graficar_comparacion_apogeo(resultados_h, dias_simulados):
     plt.grid(True)
     plt.legend()
     plt.tight_layout()
-    plt.savefig(f"comparacion_apogeo_vs_h_{dias_simulados}_dias.png", dpi=300)
+    plt.savefig(os.path.join("imagenes", f"comparacion_apogeo_vs_h_{dias_simulados}_dias.png", dpi=300))
     plt.close()
 
 # ANÁLISIS DE LARGO PLAZO
@@ -273,7 +274,7 @@ def graficar_distancia_largo_plazo(
   plt.grid(True)
   plt.legend()
   plt.tight_layout()
-  plt.savefig(f"distancia_largo_plazo_h_{h}_{dias_simulados}_dias.png", dpi=300)
+  plt.savefig(os.path.join("imagenes", f"distancia_largo_plazo_h_{h}_{dias_simulados}_dias.png", dpi=300))
   plt.close()
 
 def graficar_orbita_largo_plazo(
@@ -299,7 +300,7 @@ def graficar_orbita_largo_plazo(
   plt.grid(True)
   plt.legend()
   plt.tight_layout()
-  plt.savefig(f"orbita_largo_plazo_h_{h}_{dias_simulados}_dias.png", dpi=300)
+  plt.savefig(os.path.join("imagenes", f"orbita_largo_plazo_h_{h}_{dias_simulados}_dias.png", dpi=300))
   plt.close()
 
 def analizar_largo_plazo(h, dias_simulados):
