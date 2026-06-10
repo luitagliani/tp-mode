@@ -348,6 +348,67 @@ def graficar_distancia_luna_orion(
     plt.savefig(f"orion_distancia_luna_h_{h}.png", dpi=300)
     plt.close()
 
+def graficar_trayectoria_orion_sistema_rotante(
+    t_orion_rk2,
+    estados_orion_rk2,
+    posicion_luna,
+    h
+):
+    xO = estados_orion_rk2[:, 0]
+    yO = estados_orion_rk2[:, 1]
+
+    x_rot = []
+    y_rot = []
+    dL = []
+
+    for t, x, y in zip(t_orion_rk2, xO, yO):
+        xL, yL = posicion_luna(t)
+
+        theta = np.arctan2(yL, xL)
+
+        x_orion_rot = x * np.cos(-theta) - y * np.sin(-theta)
+        y_orion_rot = x * np.sin(-theta) + y * np.cos(-theta)
+
+        x_rot.append(x_orion_rot / 1000)
+        y_rot.append(y_orion_rot / 1000)
+
+        distancia_luna = np.sqrt((xL - x)**2 + (yL - y)**2)
+        dL.append(distancia_luna)
+
+    x_rot = np.array(x_rot)
+    y_rot = np.array(y_rot)
+    dL = np.array(dL)
+
+    indice_min_luna = np.argmin(dL)
+
+    plt.figure(figsize=(8, 8))
+
+    plt.plot(x_rot, y_rot, label="Orion RK2")
+
+    plt.scatter(0, 0, label="Tierra")
+    plt.scatter(RADIO_APOGEO / 1000, 0, label="Luna aprox.")
+
+    plt.scatter(x_rot[0], y_rot[0], marker="o", label="Inicio Orion")
+    plt.scatter(x_rot[-1], y_rot[-1], marker="x", label="Fin Orion")
+    plt.scatter(
+        x_rot[indice_min_luna],
+        y_rot[indice_min_luna],
+        marker="*",
+        s=120,
+        label="Máx. acercamiento lunar"
+    )
+
+    plt.xlabel("x [miles de km]")
+    plt.ylabel("y [miles de km]")
+    plt.title(f"Trayectoria de Orion en sistema Tierra-Luna rotante - h = {h} s")
+    plt.axis("equal")
+    plt.grid(True)
+    plt.legend()
+    plt.tight_layout()
+    plt.savefig(f"orion_trayectoria_rotante_h_{h}.png", dpi=300)
+    plt.close()
+     
+
 # ============================================================
 # EJECUCION DE ORION
 # ============================================================
@@ -363,7 +424,6 @@ def simular_orion():
     t_minimo = 3 * SEGUNDOS_POR_DIA
 
     delta_theta_deg = -78
-    factor_velocidad = 1.16
 
     t_luna, estados_luna = integrar_luna(
         Y0_LUNA,
@@ -380,7 +440,7 @@ def simular_orion():
     Y0_orion_ajustado = ajustar_angulo_velocidad(
         Y0_orion,
         delta_theta_deg,
-        factor_velocidad=1.18
+        factor_velocidad=1.16
     )
 
     t_orion_euler, estados_orion_euler = integrar_orion(
@@ -446,6 +506,13 @@ def simular_orion():
         h
     )
 
+    graficar_trayectoria_orion_sistema_rotante(
+        t_orion_rk2,
+        estados_orion_rk2,
+        posicion_luna,
+        h
+    )
+
 def probar_deltas_y_velocidades_orion():
     ruta_csv = "Artemis-II-Data.csv"
 
@@ -456,8 +523,9 @@ def probar_deltas_y_velocidades_orion():
     r_corte = 7000.0
     t_minimo = 3 * SEGUNDOS_POR_DIA
 
-    deltas = [-85, -82, -80, -78, -76, -75, -74, -72, -70, -68, -65]
-    factores = [1.06, 1.08, 1.10, 1.12, 1.1, 1.16]
+    # deltas = [-85, -82, -80, -78, -76, -75, -74, -72, -70, -68, -65]
+    deltas = [-78]
+    factores = [1.16, 1.161, 1.162, 1.163, 1.164, 1.165, 1.166, 1.167, 1.168, 1.169]
 
     t_luna, estados_luna = integrar_luna(
         Y0_LUNA,
@@ -508,7 +576,7 @@ def probar_deltas_y_velocidades_orion():
             velocidad_max = metricas_rk2["velocidad_max"]
 
             print(
-                f"{delta:5} | {factor_velocidad:6.2f} | "
+                f"{delta:5} | {factor_velocidad:6.3f} | "
                 f"{distancia_max_tierra:12.1f} | {distancia_min_tierra:12.1f} | {distancia_min_luna:10.1f} | "
                 f"{velocidad_max:14.3f}"
             )
