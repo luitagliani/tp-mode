@@ -523,9 +523,8 @@ def probar_deltas_y_velocidades_orion():
     r_corte = 7000.0
     t_minimo = 3 * SEGUNDOS_POR_DIA
 
-    # deltas = [-85, -82, -80, -78, -76, -75, -74, -72, -70, -68, -65]
-    deltas = [-78]
-    factores = [1.16, 1.161, 1.162, 1.163, 1.164, 1.165, 1.166, 1.167, 1.168, 1.169]
+    deltas = [-85, -82, -80, -78, -76, -75, -74, -72, -70, -68, -65]
+    factores = [1.10, 1.12, 1.14, 1.15, 1.16, 1.17, 1.18, 1.20]
 
     t_luna, estados_luna = integrar_luna(
         Y0_LUNA,
