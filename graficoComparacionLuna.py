@@ -68,6 +68,8 @@ def integrar(Y0, h, tiempo_total, mu_T, metodo):
             Y = paso_euler(Y, h, mu_T)
         elif metodo == "rk2":
             Y = paso_rk2(Y, h, mu_T)
+        elif metodo == "euler_cromer":
+            Y = paso_euler_cromer(Y, h, mu_T)
         else:
             raise ValueError("Metodo no reconocido")
 
@@ -250,7 +252,7 @@ def graficar_comparacion_apogeo(resultados_h, dias_simulados):
     plt.grid(True)
     plt.legend()
     plt.tight_layout()
-    plt.savefig(os.path.join("imagenes", f"comparacion_apogeo_vs_h_{dias_simulados}_dias.png", dpi=300))
+    plt.savefig(os.path.join("imagenes", f"comparacion_apogeo_vs_h_{dias_simulados}_dias.png"), dpi=300)
     plt.close()
 
 # ANÁLISIS DE LARGO PLAZO
@@ -274,7 +276,7 @@ def graficar_distancia_largo_plazo(
   plt.grid(True)
   plt.legend()
   plt.tight_layout()
-  plt.savefig(os.path.join("imagenes", f"distancia_largo_plazo_h_{h}_{dias_simulados}_dias.png", dpi=300))
+  plt.savefig(os.path.join("imagenes", f"distancia_largo_plazo_h_{h}_{dias_simulados}_dias.png"), dpi=300)
   plt.close()
 
 def graficar_orbita_largo_plazo(
@@ -300,7 +302,7 @@ def graficar_orbita_largo_plazo(
   plt.grid(True)
   plt.legend()
   plt.tight_layout()
-  plt.savefig(os.path.join("imagenes", f"orbita_largo_plazo_h_{h}_{dias_simulados}_dias.png", dpi=300))
+  plt.savefig(os.path.join("imagenes", f"orbita_largo_plazo_h_{h}_{dias_simulados}_dias.png"), dpi=300)
   plt.close()
 
 def analizar_largo_plazo(h, dias_simulados):
@@ -325,6 +327,56 @@ def analizar_largo_plazo(h, dias_simulados):
     h,
     dias_simulados
   )
+
+
+def paso_euler_cromer(Y, h, mu_T):
+    x, y, vx, vy = Y
+
+    _, _, ax, ay = f_luna(Y, mu_T)
+
+    vx_nuevo = vx + h * ax
+    vy_nuevo = vy + h * ay
+
+    x_nuevo = x + h * vx_nuevo
+    y_nuevo = y + h * vy_nuevo
+
+    return np.array([x_nuevo, y_nuevo, vx_nuevo, vy_nuevo])
+
+def simular_punto_6_euler_cromer(h, dias_simulados):
+    tiempo_total = dias_simulados * SEGUNDOS_POR_DIA
+
+    _, estados_eu = integrar(Y0, h, tiempo_total, MU_T, "euler")
+    _, estados_rk2 = integrar(Y0, h, tiempo_total, MU_T, "rk2")
+    _, estados_ec = integrar(Y0, h, tiempo_total, MU_T, "euler_cromer")
+
+    x_eu = estados_eu[:, 0] / 1000
+    y_eu = estados_eu[:, 1] / 1000
+
+    x_rk2 = estados_rk2[:, 0] / 1000
+    y_rk2 = estados_rk2[:, 1] / 1000
+
+    x_ec = estados_ec[:, 0] / 1000
+    y_ec = estados_ec[:, 1] / 1000
+
+    plt.figure(figsize=(10, 10))
+
+    plt.plot(x_eu, y_eu, label="Euler Explícito (Diverge)", color="#e63946", linewidth=1.2, alpha=0.6)
+    plt.plot(x_rk2, y_rk2, label="Runge-Kutta 2", color="#f4a261", linewidth=2.5)
+    plt.plot(x_ec, y_ec, label="Euler-Cromer (Estable)", color="#1d3557", linestyle="--", linewidth=1.5)
+
+    plt.scatter(0, 0, color="green", s=100, label="Tierra")
+
+    plt.xlabel("x [miles de km]")
+    plt.ylabel("y [miles de km]")
+    plt.title(f"Punto 6: Conservación de Energía a Largo Plazo ({dias_simulados} días)")
+    plt.axis("equal")
+    plt.grid(True)
+    plt.legend()
+    plt.tight_layout()
+
+    nombre_archivo = os.path.join("imagenes", f"luna_euler_cromer_{dias_simulados}d.png")
+    plt.savefig(nombre_archivo, dpi=300)
+    plt.close()
 
 
 if __name__ == "__main__":
@@ -372,4 +424,7 @@ if __name__ == "__main__":
     h_largo_plazo,
     dias_largo_plazo
     )
+
+
+    simular_punto_6_euler_cromer(h_largo_plazo, dias_largo_plazo)
     
