@@ -17,12 +17,14 @@ automáticamente todos los gráficos presentados en el informe, abra la consola 
 según lo que se requiera ver:
 
 **1. Análisis de la órbita lunar y métodos numéricos (Puntos 1, 4, 5 y 6)**
+
 Este script ejecuta la validación de la órbita de la Luna, el análisis de los distintos pasos temporales (h) y la simulación a largo plazo (180 días) para comparar Euler, RK2 y Euler-Cromer.
 ```bash
 python3 graficoComparacionLuna.py
 ```
 
 **2. Simulación de la trayectoria de Orion (Puntos 2 y 3)**
+
 Este script carga los datos de la telemetría, aplica los ajustes que realizamos y simula el viaje de la cápsula y el retorno a la Tierra.
 ```bash
 python3 orion.py
