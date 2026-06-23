@@ -246,6 +246,7 @@ def graficar_comparacion_apogeo(resultados_h, dias_simulados):
     plt.plot(h_values, r_max_rk2, marker="o", label="RK2")
     plt.axhline(RADIO_APOGEO, linestyle=":", label="Apogeo esperado")
     plt.xscale("log")
+    plt.yscale("log")
     plt.xlabel("Paso temporal h [s]")
     plt.ylabel("Apogeo máximo simulado [km]")
     plt.title(f"Comparación del apogeo máximo vs h - {dias_simulados} días")
